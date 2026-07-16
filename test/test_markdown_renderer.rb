@@ -95,9 +95,10 @@ class MarkdownRendererTest < Minitest::Test
     NoteTaker::CLI.new(["help"], out: output).run
 
     assert_equal("Note Taker — Meet Captions", manifest["name"])
-    assert_equal("0.5.0", manifest["version"])
+    assert_match(/\A\d+\.\d+\.\d+\z/, NoteTaker::VERSION)
+    assert_equal(NoteTaker::VERSION, manifest["version"])
     assert_includes(manifest["permissions"], "storage")
-    assert_includes(output.string, "Note Taker 0.5.0")
+    assert_includes(output.string, "Note Taker #{NoteTaker::VERSION}")
     assert_equal("cajomhnfojbdcomoagpongmigeebhcnl", NoteTaker::ExtensionIdentity.extension_id)
   end
 

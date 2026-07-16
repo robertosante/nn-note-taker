@@ -106,6 +106,8 @@ rake test
 node --test test/test_caption_model.js test/test_settings_model.js
 ```
 
+Pull requests use Conventional Commit titles and are checked in CI against Ruby 2.6 and 3.4. Release Please keeps `VERSION`, the extension manifest, `CHANGELOG.md`, tags, and GitHub Releases synchronized. See [CONTRIBUTING.md](CONTRIBUTING.md) for the version policy and release workflow.
+
 Useful checks while changing the native integration:
 
 ```sh
