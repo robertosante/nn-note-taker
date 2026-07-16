@@ -1,0 +1,67 @@
+name: CI
+
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pr-title:
+    name: Conventional PR title
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        shell: bash
+        run: |
+          pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?(!)?: .+'
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "PR title must follow Conventional Commits."
+            echo "Example: feat(ui): add compact capture mode"
+            exit 1
+          fi
+
+  test:
+    name: Ruby ${{ matrix.ruby }} and JavaScript
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - "2.6"
+          - "3.4"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+      - name: Install test dependencies
+        env:
+          TEST_RUBY: ${{ matrix.ruby }}
+        run: |
+          if [[ "$TEST_RUBY" == "2.6" ]]; then
+            gem install rake --version 13.0.6 --no-document
+            gem install minitest --version 5.20.0 --no-document
+          else
+            gem install rake minitest --no-document
+          fi
+      - name: Run the test suite
+        run: rake test
+      - name: Check JavaScript syntax
+        run: find extension -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Check the manifest and shared version
+        run: |
+          ruby -rjson -Ilib -rnote_taker -e '
+            manifest = JSON.parse(File.read("extension/manifest.json"))
+            abort "manifest version does not match VERSION" unless manifest.fetch("version") == NoteTaker::VERSION
+          '

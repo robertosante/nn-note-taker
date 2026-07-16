@@ -9,5 +9,5 @@ require_relative "note_taker/native_host"
 require_relative "note_taker/cli"
 
 module NoteTaker
-  VERSION = "0.5.0"
+  VERSION = File.read(File.expand_path("../VERSION", __dir__), encoding: "UTF-8").strip.freeze
 end
