@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Note Taker — Meet Captions",
+  "version": "0.5.0",
+  "description": "Capture Google Meet captions and save them locally as Obsidian-ready Markdown.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAth5/EDH4P3blnhloDBK7yx9ft6nZbEyuzcDdI72PVz7LBKxIgEQIuSxLUrUGSc1viHEMqHZvLzuiiegFKuz7wmZeFt61qZaZfzamAYOk54mg9FbqGKNRUcHmAgh9iRH3EGEIj48YCsKeXqdWsyB2UeIMrjqDQbYEEhEn6hovVcqczz2XiodJrE6/GAxRQk0jIZUMDULDfZ/G0SxXiJbUqZ9Acd1HyoB4dO8JRVBQKKRQWDUacRwli/240W2VBjTBjNOFNUGQMIjn/dyl/tT0QkP2WGzVKmAamJj91TLvgcKrWb8qYLGVxWenoS15WIRcW6eBM+p+Mo459R0hcgRmgQIDAQAB",
+  "permissions": [
+    "activeTab",
+    "nativeMessaging",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": [
+        "content/settings-model.js",
+        "content/caption-model.js",
+        "content/content.js"
+      ],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Show or hide Note Taker"
+  }
+}

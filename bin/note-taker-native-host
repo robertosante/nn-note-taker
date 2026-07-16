@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Chrome adds the extension origin, and sometimes platform-specific arguments,
+# when it starts a native host. This entrypoint ignores them because the
+# installed manifest already restricts access through allowed_origins.
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+require "note_taker"
+
+NoteTaker::NativeHost.new.run
